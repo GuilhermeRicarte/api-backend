@@ -1,6 +1,9 @@
-import MedicoModel from '../models/medicoModel';
+import MedicoModel from '../models/MedicoModel';
 
 class MedicoService {
+    authenticateMedico(username: any, password: any) {
+        throw new Error('Method not implemented.');
+    }
       async register(
         username: string, password: string, genero: string, cpf: string, telefone: string,
         cep: string, rua: string, bairro: string, complemento: string, cidade: string, estado: string,

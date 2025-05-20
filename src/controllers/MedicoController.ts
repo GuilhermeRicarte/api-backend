@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import MedicoService from '../services/medicoService';
+import MedicoService from '../services/MedicoService';
 
 class MedicoController {
     async register(req: Request, res: Response) {
@@ -45,6 +45,30 @@ class MedicoController {
             return res.status(500).json({ message: 'Internal server error.' });
         }
     }
+
+    async loginMedico(req: Request, res: Response) {
+        try {
+            const { username, password } = req.body;
+
+            if (!username || !password) {
+                return res.status(400).json({ message: 'Username and password are required.' });
+            }
+
+            // Autentica normalmente
+            const token = await MedicoService.authenticateMedico(username, password);
+
+            if (typeof token !== 'string' || !token) {
+                return res.status(401).json({ message: 'Invalid credentials or not a medico.' });
+            }
+
+            return res.status(200).json({ message: 'Login médico realizado com sucesso.', token });
+        } catch (error) {
+            console.error('Erro no login do médico:', error);
+            return res.status(500).json({ message: 'Erro interno do servidor.' });
+        }
+    }
+
+// ...existing code...
 
     async recoverPassword(req: Request, res: Response) {
         try {

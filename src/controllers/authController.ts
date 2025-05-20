@@ -64,6 +64,28 @@ class AuthController {
         }
     }
 
+    async loginMedico(req: Request, res: Response) {
+        try {
+            const { username, password } = req.body;
+
+            if (!username || !password) {
+                return res.status(400).json({ message: 'Username and password are required.' });
+            }
+
+            // Autentica normalmente
+            const token = await AuthService.authenticate(username, password);
+
+            if (!token) {
+                return res.status(401).json({ message: 'Invalid credentials or not a medico.' });
+            }
+
+            return res.status(200).json({ message: 'Login médico realizado com sucesso.', token });
+        } catch (error) {
+            console.error('Erro no login do médico:', error);
+            return res.status(500).json({ message: 'Erro interno do servidor.' });
+        }
+    }
+
     async updateFotoPerfil(req: Request, res: Response) {
         try {
             const { username, fotoPerfil } = req.body;
