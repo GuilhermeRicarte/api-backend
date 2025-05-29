@@ -1,3 +1,5 @@
+import prisma from '../prisma';
+import { Prisma } from '@prisma/client';
 type User = {
     id: number;
     username: string;
@@ -14,29 +16,29 @@ type User = {
     fotoPerfil: string;
 };
 
+
 const users: User[] = [];
 
 class UserModel {
-    static updatePassword(username: string, newHashedPassword: string) {
-        throw new Error('Method not implemented.');
+    static async findByUsername(username: string) {
+        return prisma.user.findUnique({ where: { username } });
     }
-    static async findByUsername(username: string): Promise<User | null> {
-        return users.find(user => user.username === username) || null;
-    }
-
-    static async create(user: Omit<User, 'id'>): Promise<User> {
-        const newUser = { id: users.length + 1, ...user };
-        users.push(newUser);
-        return newUser;
+    static async create(user: Prisma.UserCreateInput) {
+    return prisma.user.create({ data: user });
     }
 
-    static async updateFotoPerfil(username: string, fotoPerfil: string): Promise<User | null> {
-        const user = users.find(u => u.username === username);
-        if (user) {
-            user.fotoPerfil = fotoPerfil;
-            return user;
-        }
-        return null;
+    static async updateFotoPerfil(username: string, fotoPerfil: string) {
+        return prisma.user.update({
+            where: { username },
+            data: { fotoPerfil }
+        });
+    }
+
+    static async updatePassword(username: string, newHashedPassword: string) {
+        return prisma.user.update({
+            where: { username },
+            data: { senha: newHashedPassword }
+        });
     }
 }
 

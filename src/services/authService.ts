@@ -14,7 +14,7 @@ class AuthService {
         }
 
         // Verifica a senha
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = await bcrypt.compare(password, user.senha); // <-- aqui!
         if (!isPasswordValid) {
             return null;
         }
@@ -30,7 +30,19 @@ class AuthService {
     }
 
     async register(
-username: string, password: string, genero: string, cpf: string, telefone: string, cep: string, rua: string, bairro: string, complemento: string, cidade: string, estado: string, fotoPerfil: string    ) {
+        username: string,
+        password: string,
+        genero: string,
+        cpf: string,
+        telefone: string,
+        cep: string,
+        rua: string,
+        bairro: string,
+        complemento: string,
+        cidade: string,
+        estado: string,
+        fotoPerfil: string
+    ) {
         const existingUser = await UserModel.findByUsername(username);
 
         if (existingUser) {
@@ -40,36 +52,37 @@ username: string, password: string, genero: string, cpf: string, telefone: strin
         // Hash da senha
         const hashedPassword = await bcrypt.hash(password, 10);
 
-
         // Cria o usuário
         const newUser = await UserModel.create({
-            username,
-            password: hashedPassword,
-            genero,
-            cpf,
-            telefone,
-            cep,
-            rua,
-            bairro,
-            complemento,
-            cidade,
-            estado,
-            fotoPerfil: ''
-        });
+    username,
+    senha: hashedPassword,
+    genero,
+    cpf,
+    telefone,
+    cep,
+    rua,
+    bairro,
+    complemento,
+    cidade,
+    estado,
+    fotoPerfil
+     });
 
         return newUser;
     }
+
 
     async updateFotoPerfil(username: string, fotoPerfil: string) {
         return await UserModel.updateFotoPerfil(username, fotoPerfil);
     }
 
-    async recoverPassword(username: string, newHashedPassword: string) {
+    async recoverPassword(username: string, newPassword: string) {
         const user = await UserModel.findByUsername(username);
         if (!user) {
             return false;
         }
-        await UserModel.updatePassword(username, newHashedPassword);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await UserModel.updatePassword(username, hashedPassword);
         return true;
     }
 }

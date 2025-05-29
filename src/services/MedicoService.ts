@@ -1,45 +1,76 @@
+import bcrypt from 'bcrypt';
 import MedicoModel from '../models/MedicoModel';
 
 class MedicoService {
-    authenticateMedico(username: any, password: any) {
-        throw new Error('Method not implemented.');
+    async authenticateMedico(email: string, senha: string) {
+        const medico = await MedicoModel.findByEmail(email);
+        if (!medico) {
+            return null;
+        }
+        const isPasswordValid = await bcrypt.compare(senha, medico.senha);
+        if (!isPasswordValid) {
+            return null;
+        }
+        // Gere e retorne um token JWT se desejar
+        return medico;
     }
-      async register(
-        username: string, password: string, genero: string, cpf: string, telefone: string,
-        cep: string, rua: string, bairro: string, complemento: string, cidade: string, estado: string,
-        crm: string, especialidade: string, rqe: string, universidade: string, anoFormatura: string, resumoCurriculo: string,
-        fotoCrm: string, documentoIdentidade: string, certificadoEspecializacao: string,
-        valorPadraoConsulta: number, tempoMedioConsulta: number
+
+    async register(
+        email: string,
+        senha: string,
+        crm: string,
+        especialidade: string,
+        telefone: string,
+        rqe: string,
+        universidade: string,
+        anoFormatura: string,
+        resumoCurriculo: string,
+        fotoPerfil: string,
+        fotoCrm: string,
+        documentoIdentidade: string,
+        certificadoEspecializacao: string,
+        valorPadraoConsulta: number,
+        tempoMedioConsulta: number
     ) {
-        const existingMedico = await MedicoModel.findByUsername(username);
+        const existingMedico = await MedicoModel.findByEmail(email);
         if (existingMedico) {
             throw new Error('Medico already exists.');
         }
+        const hashedPassword = await bcrypt.hash(senha, 10);
 
         const newMedico = await MedicoModel.create({
-            username, password, genero, cpf, telefone,
-            cep, rua, bairro, complemento, cidade, estado,
-            crm, especialidade, rqe, universidade, anoFormatura, resumoCurriculo,
-            fotoCrm, documentoIdentidade, certificadoEspecializacao,
-            fotoPerfil: '',
-            valorPadraoConsulta: 0,
-            tempoMedioConsulta: 0
-        });
+              email,
+              senha: hashedPassword,
+              crm,
+              especialidade,
+              telefone,
+              rqe,
+              universidade,
+              anoFormatura,
+              resumoCurriculo,
+              fotoPerfil,
+              fotoCrm,
+              documentoIdentidade,
+              certificadoEspecializacao,
+              valorPadraoConsulta,
+              tempoMedioConsulta
+});
 
         return newMedico;
     }
-    async recoverPassword(username: string, newPassword: string) {
-        const medico = await MedicoModel.findByUsername(username);
+
+    async recoverPassword(email: string, newPassword: string) {
+        const medico = await MedicoModel.findByEmail(email);
         if (!medico) {
             throw new Error('Medico not found.');
         }
-
-        const updatedMedico = await MedicoModel.updatePassword(username, newPassword);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedMedico = await MedicoModel.updatePassword(email, hashedPassword);
         return updatedMedico;
     }
 
-       async updateFotoPerfil(username: string, fotoPerfil: string) {
-        return await MedicoModel.updateFotoPerfil(username, fotoPerfil);
+    async updateFotoPerfil(email: string, fotoPerfil: string) {
+        return await MedicoModel.updateFotoPerfil(email, fotoPerfil);
     }
 }
 

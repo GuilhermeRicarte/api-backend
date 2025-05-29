@@ -1,19 +1,30 @@
 import { Router } from 'express';
 import MedicoController from '../controllers/MedicoController';
-import authController from '../controllers/authController';
 import multer from 'multer';
 
 const upload = multer({ dest: 'uploads/' });
 
 const router = Router();
 
-router.post('/register', (req, res, next) => {
-	MedicoController.register(req, res).catch(next);
-});
+// Cadastro de médico com múltiplos arquivos
+router.post(
+    '/register',
+    upload.fields([
+        { name: 'fotoPerfil', maxCount: 1 },
+        { name: 'fotoCrm', maxCount: 1 }
+    ]),
+    (req, res, next) => {
+        MedicoController.register(req, res).catch(next);
+    }
+);
+
+// Recuperação de senha do médico
 router.post('/recover-password', (req, res, next) => {
-	MedicoController.recoverPassword(req, res).catch(next);
+    try {
+        MedicoController.recoverPassword(req, res);
+    } catch (error) {
+        next(error);
+    }
 });
-router.post('/register', upload.single('fotoPerfil'), authController.register);
-router.put('/perfil/foto', upload.single('fotoPerfil'), authController.updateFotoPerfil);
 
 export default router;

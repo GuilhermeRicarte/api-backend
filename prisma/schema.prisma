@@ -16,7 +16,7 @@ generator client {
 model User {
   id          Int     @id @default(autoincrement())
   username    String  @unique
-  password    String
+  senha       String
   genero      String
   cpf         String
   telefone    String
@@ -30,13 +30,20 @@ model User {
 }
 
 model Medico {
-  id            Int     @id @default(autoincrement())
-  nome          String
-  crm           String  @unique
-  especialidade String
-  telefone      String
-  email         String  @unique
-  senha         String
-  fotoPerfil    String?
-}
+  id                       Int     @id @default(autoincrement())
+  email                    String  @unique
+  senha                    String
+  crm                      String
+  especialidade            String
+  telefone                 String
+  rqe                      String
+  universidade             String
+  anoFormatura             String
+  resumoCurriculo          String
+  fotoPerfil               String?
+  fotoCrm                  String?
+  documentoIdentidade      String?
+  certificadoEspecializacao String?
+  valorPadraoConsulta      Float
+  tempoMedioConsulta       Int
 }
