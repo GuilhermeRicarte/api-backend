@@ -6,43 +6,74 @@ class MedicoController {
     async register(req: Request, res: Response) {
         try {
             const {
-                username, password, genero, cpf, telefone,
-                cep, rua, bairro, complemento, cidade, estado,
-                crm, especialidade, rqe, universidade, anoFormatura, resumoCurriculo,
-                fotoCrm, documentoIdentidade, certificadoEspecializacao,
-                valorPadraoConsulta, tempoMedioConsulta
+                nome, crm, especialidade, telefone, email, senha
             } = req.body;
 
+            // Pega o nome do arquivo enviado (ex: fotoPerfil ou documento)
+            const fotoPerfil = req.file ? req.file.filename : '';
+
             if (
-                !username || !password || !genero || !cpf || !telefone ||
-                !cep || !rua || !bairro || !complemento || !cidade || !estado ||
-                !crm || !especialidade || !rqe || !universidade || !anoFormatura || !resumoCurriculo ||
-                !fotoCrm || !documentoIdentidade || !certificadoEspecializacao ||
-                valorPadraoConsulta === undefined || tempoMedioConsulta === undefined
+                !nome || !crm || !especialidade || !telefone || !email || !senha
             ) {
-                return res.status(400).json({
-                    message: 'All fields are required: username, password, genero, cpf, telefone, cep, rua, bairro, complemento, cidade, estado, crm, especialidade, rqe, universidade, anoFormatura, resumoCurriculo, fotoCrm, documentoIdentidade, certificadoEspecializacao, valorPadraoConsulta, tempoMedioConsulta.'
-                });
+                return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            // Map request body fields to service arguments, provide defaults for missing fields
+            const {
+                username = email,
+                password = senha,
+                genero = '',
+                cpf = '',
+                cep = '',
+                rua = '',
+                bairro = '',
+                complemento = '',
+                cidade = '',
+                estado = '',
+                rqe = '',
+                universidade = '',
+                anoFormatura = '',
+                resumoCurriculo = '',
+                fotoCrm = '',
+                documentoIdentidade = '',
+                certificadoEspecializacao = '',
+                valorPadraoConsulta = 0,
+                tempoMedioConsulta = 0
+            } = req.body;
 
             const medico = await MedicoService.register(
-                username, hashedPassword, genero, cpf, telefone,
-                cep, rua, bairro, complemento, cidade, estado,
-                crm, especialidade, rqe, universidade, anoFormatura, resumoCurriculo,
-                fotoCrm, documentoIdentidade, certificadoEspecializacao,
-                valorPadraoConsulta, tempoMedioConsulta
+                username,
+                password,
+                genero,
+                cpf,
+                telefone,
+                cep,
+                rua,
+                bairro,
+                complemento,
+                cidade,
+                estado,
+                crm,
+                especialidade,
+                rqe,
+                universidade,
+                anoFormatura,
+                resumoCurriculo,
+                fotoCrm,
+                documentoIdentidade,
+                certificadoEspecializacao,
+                valorPadraoConsulta,
+                tempoMedioConsulta
             );
 
             if (!medico) {
-                return res.status(400).json({ message: 'Registration failed. Medico may already exist.' });
+                return res.status(400).json({ message: 'Erro ao cadastrar médico.' });
             }
 
-            return res.status(201).json({ message: 'Medico registered successfully.', medico });
+            return res.status(201).json({ message: 'Médico cadastrado com sucesso.', medico });
         } catch (error) {
-            console.error('Error during medico registration:', error instanceof Error ? error.message : error);
-            return res.status(500).json({ message: 'Internal server error.' });
+            console.error('Erro no cadastro do médico:', error);
+            return res.status(500).json({ message: 'Erro interno do servidor.' });
         }
     }
 

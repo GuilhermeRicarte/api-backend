@@ -26,62 +26,33 @@ class AuthController {
 
     async register(req: Request, res: Response) {
         try {
-            const { username, password, genero, cpf, telefone, cep, rua, bairro, complemento, cidade, estado } = req.body;
+            const {
+                username, password, genero, cpf, telefone,
+                cep, rua, bairro, complemento, cidade, estado
+            } = req.body;
+
+            // Pega o nome do arquivo enviado (se houver)
+            const fotoPerfil = req.file ? req.file.filename : '';
 
             if (
                 !username || !password || !genero || !cpf || !telefone ||
                 !cep || !rua || !bairro || !complemento || !cidade || !estado
             ) {
-                return res.status(400).json({
-                    message: 'All fields are required: username, password, genero, cpf, telefone, cep, rua, bairro, complemento, cidade, estado.'
-                });
+                return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
-
             const user = await AuthService.register(
-                username,
-                hashedPassword,
-                genero,
-                cpf,
-                telefone,
-                cep,
-                rua,
-                bairro,
-                complemento,
-                cidade,
-                estado
+                username, password, genero, cpf, telefone,
+                cep, rua, bairro, complemento, cidade, estado, fotoPerfil
             );
 
             if (!user) {
-                return res.status(400).json({ message: 'Registration failed. User may already exist.' });
+                return res.status(400).json({ message: 'Erro ao cadastrar usuário.' });
             }
 
-            return res.status(201).json({ message: 'User registered successfully.', user });
+            return res.status(201).json({ message: 'Usuário cadastrado com sucesso.', user });
         } catch (error) {
-            console.error('Error during registration:', error instanceof Error ? error.message : error);
-            return res.status(500).json({ message: 'Internal server error.' });
-        }
-    }
-
-    async loginMedico(req: Request, res: Response) {
-        try {
-            const { username, password } = req.body;
-
-            if (!username || !password) {
-                return res.status(400).json({ message: 'Username and password are required.' });
-            }
-
-            // Autentica normalmente
-            const token = await AuthService.authenticate(username, password);
-
-            if (!token) {
-                return res.status(401).json({ message: 'Invalid credentials or not a medico.' });
-            }
-
-            return res.status(200).json({ message: 'Login médico realizado com sucesso.', token });
-        } catch (error) {
-            console.error('Erro no login do médico:', error);
+            console.error('Erro no cadastro:', error);
             return res.status(500).json({ message: 'Erro interno do servidor.' });
         }
     }
