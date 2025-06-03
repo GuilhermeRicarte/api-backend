@@ -47,3 +47,15 @@ model Medico {
   valorPadraoConsulta      Float
   tempoMedioConsulta       Int
 }
+
+model Prontuario {
+  id          Int      @id @default(autoincrement())
+  pacienteId  Int
+  medicoId    Int
+  data        DateTime @default(now())
+  descricao   String
+  observacoes String?
+  // Relacionamentos (opcional, se tiver modelos de Paciente e Medico)
+  // paciente   Paciente @relation(fields: [pacienteId], references: [id])
+  // medico     Medico   @relation(fields: [medicoId], references: [id])
+}
