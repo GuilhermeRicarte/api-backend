@@ -6,6 +6,7 @@ import MedicoRoutes from './routes/MedicoRoutes';
 import videoCallRoutes from './routes/videoCallRoutes';
 import cors from 'cors';
 import prontuarioRoutes from './routes/ProntuarioRoutes';
+import agendamentoRoutes from './routes/AgendamentoRoutes';
 
 // Configuração do dotenv
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(cors());
 app.use('/api', authRoutes);
 app.use('/api', MedicoRoutes);
 app.use('/api/prontuarios', prontuarioRoutes);
+app.use('/api/agendamentos', agendamentoRoutes);
 
 // Porta do servidor
 const PORT = process.env.PORT || 3000;

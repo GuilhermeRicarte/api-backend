@@ -1,0 +1,7 @@
+-- CreateTable
+CREATE TABLE "VideoChamada" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "consultaId" INTEGER NOT NULL,
+    "videoCallId" TEXT NOT NULL,
+    "dataCriacao" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

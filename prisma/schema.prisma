@@ -59,3 +59,24 @@ model Prontuario {
   // paciente   Paciente @relation(fields: [pacienteId], references: [id])
   // medico     Medico   @relation(fields: [medicoId], references: [id])
 }
+
+model Agendamento {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  pacienteId Int
+  medicoId   Int
+  dataHora   DateTime
+  status     StatusAgendamento @default(PENDENTE)
+  observacao String?
+
+  // Relacionamentos opcionais
+  // paciente   Paciente @relation(fields: [pacienteId], references: [id])
+  // medico     Medico   @relation(fields: [medicoId], references: [id])
+}
+
+enum StatusAgendamento {
+  PENDENTE
+  EM_ANDAMENTO
+  CANCELADA
+  FINALIZADA
+}
