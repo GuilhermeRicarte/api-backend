@@ -1,11 +1,6 @@
 import { Request, Response } from 'express';
 import AgendamentoService from '../services/AgendamentoService';
-
-enum StatusAgendamento {
-    PENDENTE = 'PENDENTE',
-    CONFIRMADO = 'CONFIRMADO',
-    CANCELADO = 'CANCELADO'
-}
+import { StatusAgendamento } from '@prisma/client';
 
 class AgendamentoController {
     async create(req: Request, res: Response) {

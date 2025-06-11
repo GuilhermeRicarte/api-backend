@@ -1,24 +1,24 @@
 import prisma from '../prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, StatusAgendamento } from '@prisma/client';
 
 class AgendamentoModel {
-    static async create(data: Prisma.AgendamentosCreateInput) {
-        return prisma.agendamentos.create({ data });
+    static async create(data: Prisma.AgendamentoCreateInput) {
+        return prisma.agendamento.create({ data });
     }
 
     static async findByUuid(uuid: string) {
-        return prisma.agendamentos.findUnique({ where: { uuid } });
+        return prisma.agendamento.findUnique({ where: { uuid } });
     }
 
     static async updateStatus(uuid: string, status: StatusAgendamento) {
-        return prisma.agendamentos.update({
+        return prisma.agendamento.update({
             where: { uuid },
             data: { status }
         });
     }
 
     static async listAll() {
-        return prisma.agendamentos.findMany();
+        return prisma.agendamento.findMany();
     }
 }
 

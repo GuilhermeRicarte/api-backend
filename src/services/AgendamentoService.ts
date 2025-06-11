@@ -1,10 +1,5 @@
 import AgendamentoModel from '../models/AgendamentoModel';
-
-export enum StatusAgendamento {
-    PENDENTE = 'PENDENTE',
-    CONFIRMADO = 'CONFIRMADO',
-    CANCELADO = 'CANCELADO'
-}
+import { StatusAgendamento } from '@prisma/client';
 
 class AgendamentoService {
     async create(pacienteId: number, medicoId: number, dataHora: Date, observacao?: string) {
